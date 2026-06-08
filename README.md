@@ -47,7 +47,7 @@ VITE_SUPABASE_ANON_KEY=your-anon-key
 ## 개발 로드맵
 
 0. ✅ 셋업 (Vite + Tailwind + Supabase 클라이언트)
-1. ⬜ 정적 UI 클론 (채팅방 목록 / 채팅방 / 친구 탭)
+1. ✅ 정적 UI 클론 (친구 / 채팅 목록 / 채팅방 / 하단 네비, React Router)
 2. ⬜ 인증 (이메일 + Google OAuth)
 3. ⬜ 1:1 실시간 메시지 (★ 핵심)
 4. ⬜ 채팅방 목록 고도화 (미리보기 / 안 읽은 수)
