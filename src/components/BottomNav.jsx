@@ -1,9 +1,9 @@
 import { NavLink } from 'react-router-dom'
 
 const tabs = [
-  { to: '/', label: '친구', icon: '👤', end: true },
-  { to: '/chats', label: '채팅', icon: '💬' },
-  { to: '/more', label: '더보기', icon: '☰' },
+  { to: '/app', label: '친구', icon: '👤', end: true },
+  { to: '/app/chats', label: '채팅', icon: '💬' },
+  { to: '/app/more', label: '더보기', icon: '☰' },
 ]
 
 function BottomNav() {

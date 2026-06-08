@@ -1,11 +1,6 @@
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import {
-  currentUser,
-  friends,
-  getChatById,
-  messagesByChat,
-} from '../data/dummy'
+import { friends, getChatById, messagesByChat } from '../data/dummy'
 
 // 발신자 id -> 표시 이름 (그룹방에서 상대 이름 표기용)
 function senderName(senderId) {
@@ -48,7 +43,7 @@ function ChatRoom() {
       {/* 헤더 */}
       <header className="flex items-center gap-2 px-3 py-3">
         <button
-          onClick={() => navigate('/chats')}
+          onClick={() => navigate('/app/chats')}
           className="px-1 text-xl text-gray-700"
           aria-label="뒤로"
         >

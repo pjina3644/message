@@ -7,3 +7,8 @@ body,
   height: 100%;
   margin: 0;
 }
+
+/* 랜딩 페이지 앵커 이동 시 부드러운 스크롤 */
+html {
+  scroll-behavior: smooth;
+}

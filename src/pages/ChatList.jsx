@@ -12,7 +12,7 @@ function ChatList() {
         {chats.map((chat) => (
           <li key={chat.id}>
             <Link
-              to={`/chats/${chat.id}`}
+              to={`/app/chats/${chat.id}`}
               className="flex items-center gap-3 px-5 py-3 active:bg-gray-50"
             >
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gray-100 text-2xl">
