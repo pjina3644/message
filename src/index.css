@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+/* 채팅앱 기본: 전체 화면 높이 사용 */
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
