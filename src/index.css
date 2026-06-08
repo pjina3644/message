@@ -1,6 +1,39 @@
 @import "tailwindcss";
 
-/* 채팅앱 기본: 전체 화면 높이 사용 */
+/* ─────────────────────────────────────────────────────────────
+   Kakao 디자인 시스템 토큰 (DESIGN.md 기반)
+   - Tailwind v4 @theme → bg-/text-/border- 유틸리티 자동 생성
+───────────────────────────────────────────────────────────── */
+@theme {
+  /* 시스템 폰트 — 대화는 '디자인된' 게 아니라 '내 메시지'처럼 느껴져야 함 */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", Roboto,
+    "Noto Sans KR", "Malgun Gothic", sans-serif;
+
+  /* 브랜드 */
+  --color-kakao: #fee500;            /* 카카오 옐로 — 컴플라이언스(로그인/주요 CTA) */
+  --color-kakao-marketing: #fae100;  /* 마케팅 옐로 */
+  --color-kakao-ink: #1e1e1e;        /* 니어 블랙 — 브랜드 베이스 */
+
+  /* 텍스트 그레이 스케일: #222 → #333 → #666 → #808080 → #999 → #BBB */
+  --color-ink: #222222;       /* 이름·제목 */
+  --color-ink-body: #333333;  /* 본문·메시지 (워크호스) */
+  --color-ink-sub: #666666;   /* 보조 라벨 */
+  --color-ink-muted: #808080; /* 상태메시지 */
+  --color-ink-light: #999999; /* 타임스탬프·시스템 */
+  --color-ink-hint: #bbbbbb;  /* 비활성·플레이스홀더 */
+
+  /* 서피스 & 보더 — Kakao는 그림자 대신 배경색 차이로 깊이 표현 */
+  --color-surface: #f8f8f8;
+  --color-fill: #f0f0f0;
+  --color-line: #e5e5e5;
+  --color-line-subtle: #f0f0f0;
+
+  /* 시맨틱 */
+  --color-danger: #e02000;
+  --color-link: #2196f3;
+  --color-success: #47b881;
+}
+
 html,
 body,
 #root {
@@ -8,7 +41,39 @@ body,
   margin: 0;
 }
 
+body {
+  font-family: var(--font-sans);
+  color: var(--color-ink-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
 /* 랜딩 페이지 앵커 이동 시 부드러운 스크롤 */
 html {
   scroll-behavior: smooth;
+}
+
+/* 채팅 메시지 등장 — spring scale(0.95 → 1.0)은 Kakao 채팅의 시그니처 모션 */
+@keyframes bubble-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.animate-bubble {
+  animation: bubble-in 0.3s cubic-bezier(0.2, 0.6, 0.25, 1);
+}
+
+/* prefers-reduced-motion: spring 제거, 즉시 표시 */
+@media (prefers-reduced-motion: reduce) {
+  .animate-bubble {
+    animation: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
 }

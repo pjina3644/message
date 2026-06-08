@@ -1,11 +1,20 @@
 import { Link } from 'react-router-dom'
 import { chats } from '../data/dummy'
+import Avatar from '../components/Avatar'
+import { Search } from '../components/Icons'
 
 function ChatList() {
   return (
-    <div>
-      <header className="px-5 pt-4 pb-2">
-        <h1 className="text-xl font-bold text-gray-900">채팅</h1>
+    <div className="pb-2">
+      <header className="flex h-14 items-center justify-between px-4">
+        <h1 className="text-[22px] font-bold text-ink">채팅</h1>
+        <button
+          type="button"
+          aria-label="검색"
+          className="flex h-9 w-9 items-center justify-center rounded-xl text-ink-sub transition-colors active:bg-surface"
+        >
+          <Search size={22} />
+        </button>
       </header>
 
       <ul>
@@ -13,29 +22,25 @@ function ChatList() {
           <li key={chat.id}>
             <Link
               to={`/app/chats/${chat.id}`}
-              className="flex items-center gap-3 px-5 py-3 active:bg-gray-50"
+              className="flex items-center gap-3 px-4 py-3 transition-colors active:bg-surface"
             >
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gray-100 text-2xl">
-                {chat.avatar}
-              </div>
+              <Avatar name={chat.name} group={chat.type === 'group'} size="md" />
 
               <div className="min-w-0 flex-1">
                 <div className="flex items-baseline justify-between gap-2">
-                  <p className="truncate font-semibold text-gray-900">
-                    {chat.name}
-                  </p>
-                  <span className="shrink-0 text-xs text-gray-400">
+                  <p className="truncate font-semibold text-ink">{chat.name}</p>
+                  <span className="shrink-0 text-xs text-ink-light">
                     {chat.lastTime}
                   </span>
                 </div>
-                <p className="truncate text-sm text-gray-500">
+                <p className="truncate text-sm text-ink-muted">
                   {chat.lastMessage}
                 </p>
               </div>
 
               {chat.unread > 0 && (
-                <span className="ml-1 flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-bold text-white">
-                  {chat.unread}
+                <span className="ml-1 flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-danger px-1.5 text-[11px] font-bold leading-none text-white">
+                  {chat.unread > 99 ? '99+' : chat.unread}
                 </span>
               )}
             </Link>
