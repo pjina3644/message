@@ -10,6 +10,7 @@ import ChatRoom from './pages/ChatRoom'
 import More from './pages/More'
 import Auth from './pages/Auth'
 import ProfileEdit from './pages/ProfileEdit'
+import NewChat from './pages/NewChat'
 
 function ProtectedRoute({ session, children }) {
   // Supabase가 설정되지 않았으면 개발 편의를 위해 통과시킴
@@ -93,6 +94,8 @@ function App() {
         <Route path="chats/:id" element={<ChatRoom />} />
         {/* 프로필 편집 (네비 없음) */}
         <Route path="profile" element={<ProfileEdit />} />
+        {/* 새 채팅 개설 (네비 없음) */}
+        <Route path="chats/new" element={<NewChat />} />
       </Route>
     </Routes>
   )

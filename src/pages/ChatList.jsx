@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { supabase, isSupabaseConfigured } from '../lib/supabase'
 import Avatar from '../components/Avatar'
-import { Search } from '../components/Icons'
+import { Search, Plus } from '../components/Icons'
 
 function formatChatTime(isoString) {
   if (!isoString) return ''
@@ -32,6 +32,7 @@ function formatChatTime(isoString) {
 }
 
 function ChatList() {
+  const navigate = useNavigate()
   const [chatList, setChatList] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -100,13 +101,23 @@ function ChatList() {
     <div className="pb-2 bg-white min-h-full">
       <header className="flex h-14 items-center justify-between px-4">
         <h1 className="text-[22px] font-bold text-ink">채팅</h1>
-        <button
-          type="button"
-          aria-label="검색"
-          className="flex h-9 w-9 items-center justify-center rounded-xl text-ink-sub transition-colors active:bg-surface"
-        >
-          <Search size={22} />
-        </button>
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            aria-label="검색"
+            className="flex h-9 w-9 items-center justify-center rounded-xl text-ink-sub transition-colors active:bg-surface"
+          >
+            <Search size={22} />
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate('/app/chats/new')}
+            aria-label="새 채팅"
+            className="flex h-9 w-9 items-center justify-center rounded-xl text-ink-sub transition-colors active:bg-surface"
+          >
+            <Plus size={22} />
+          </button>
+        </div>
       </header>
 
       {chatList.length === 0 ? (

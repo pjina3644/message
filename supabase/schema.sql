@@ -242,3 +242,32 @@ begin
 end;
 $$;
 
+-- ============================================================
+-- RPC: create_group_chat(_name, _user_ids) - 그룹 채팅 생성
+-- ============================================================
+create or replace function public.create_group_chat(_name text, _user_ids uuid[])
+returns uuid
+language plpgsql
+security definer
+as $$
+declare
+  _chat_id uuid;
+  _uid uuid;
+begin
+  insert into public.chats (type, name)
+  values ('group', _name)
+  returning id into _chat_id;
+  
+  insert into public.chat_members (chat_id, user_id)
+  values (_chat_id, auth.uid());
+  
+  foreach _uid in array _user_ids loop
+    if _uid != auth.uid() then
+      insert into public.chat_members (chat_id, user_id)
+      values (_chat_id, _uid);
+    end if;
+  end loop;
+  
+  return _chat_id;
+end;
+$$;
