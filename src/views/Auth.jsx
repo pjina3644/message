@@ -79,7 +79,7 @@ function Auth() {
         router.push('/app')
       }
     } catch (err) {
-      console.error(err)
+      console.warn('인증 오류:', err.message || err)
       setErrorMsg(err.message || '인증 오류가 발생했습니다.')
     } finally {
       setLoading(false)
