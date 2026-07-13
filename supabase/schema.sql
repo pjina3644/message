@@ -149,7 +149,8 @@ returns table (
   last_message text,
   last_time timestamptz,
   unread_count bigint,
-  avatar_url text
+  avatar_url text,
+  member_count bigint
 )
 language plpgsql
 security definer
@@ -185,6 +186,11 @@ begin
     join public.profiles p on cm.user_id = p.id
     where cm.user_id != auth.uid()
     group by cm.chat_id
+  ),
+  chat_member_count as (
+    select cm.chat_id, count(cm.user_id) as count
+    from public.chat_members cm
+    group by cm.chat_id
   )
   select 
     c.id as chat_id,
@@ -199,12 +205,14 @@ begin
     case
       when c.type = 'direct' then com.avatar_url
       else null
-    end as avatar_url
+    end as avatar_url,
+    coalesce(cmc.count, 0) as member_count
   from public.chats c
   join user_chats uc on c.id = uc.chat_id
   left join chat_last_msg clm on c.id = clm.chat_id
   left join chat_unread cu on c.id = cu.chat_id
-  left join chat_other_member com on c.id = com.chat_id;
+  left join chat_other_member com on c.id = com.chat_id
+  left join chat_member_count cmc on c.id = cmc.chat_id;
 end;
 $$;
 

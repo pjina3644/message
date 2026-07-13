@@ -137,7 +137,14 @@ function ChatList() {
 
                 <div className="min-w-0 flex-1">
                   <div className="flex items-baseline justify-between gap-2">
-                    <p className="truncate font-semibold text-ink">{chat.name || '알 수 없음'}</p>
+                    <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                      <p className="truncate font-semibold text-ink">{chat.name || '알 수 없음'}</p>
+                      {chat.type === 'group' && chat.member_count > 0 && (
+                        <span className="text-xs text-ink-light font-normal shrink-0">
+                          {chat.member_count}
+                        </span>
+                      )}
+                    </div>
                     <span className="shrink-0 text-xs text-ink-light">
                       {formatChatTime(chat.last_time)}
                     </span>
