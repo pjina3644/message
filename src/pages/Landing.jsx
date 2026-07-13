@@ -152,7 +152,8 @@ function PhoneMockup() {
   )
 }
 
-function Landing() {
+function Landing({ session }) {
+  const startPath = session ? '/app' : '/auth'
   return (
     <div className="min-h-screen bg-white text-ink-body">
       {/* ───── 상단 네비게이션 ───── */}
@@ -173,7 +174,7 @@ function Landing() {
               사용법
             </a>
             <Link
-              to="/app"
+              to={startPath}
               className="rounded-2xl border-2 border-kakao-ink bg-kakao-marketing px-4 py-2 text-sm font-bold text-kakao-ink transition hover:brightness-95"
             >
               시작하기
@@ -210,7 +211,7 @@ function Landing() {
             </p>
 
             <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row lg:justify-start sm:justify-center">
-              <MarketingPill to="/app" className="w-full sm:w-auto">
+              <MarketingPill to={startPath} className="w-full sm:w-auto">
                 무료로 시작하기
                 <ArrowRight size={18} />
               </MarketingPill>
@@ -318,7 +319,7 @@ function Landing() {
             가입은 무료. 친구를 찾고, 첫 메시지를 보내보세요.
           </p>
           <Link
-            to="/app"
+            to={startPath}
             className="mt-7 inline-flex items-center gap-2 rounded-2xl bg-kakao-ink px-8 py-3.5 text-base font-bold text-white transition hover:brightness-125"
           >
             무료로 시작하기

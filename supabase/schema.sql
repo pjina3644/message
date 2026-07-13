@@ -137,3 +137,100 @@ create trigger on_auth_user_created
 -- (3단계 실시간 수신에 필요)
 -- ============================================================
 alter publication supabase_realtime add table public.messages;
+
+-- ============================================================
+-- RPC: get_my_chats() - 내 채팅방 목록 및 메타데이터 조회
+-- ============================================================
+create or replace function public.get_my_chats()
+returns table (
+  chat_id uuid,
+  type text,
+  name text,
+  last_message text,
+  last_time timestamptz,
+  unread_count bigint
+)
+language plpgsql
+security definer
+as $$
+begin
+  return query
+  with user_chats as (
+    select cm.chat_id, cm.last_read_at
+    from public.chat_members cm
+    where cm.user_id = auth.uid()
+  ),
+  chat_last_msg as (
+    select distinct on (m.chat_id)
+      m.chat_id,
+      m.content,
+      m.created_at
+    from public.messages m
+    join user_chats uc on m.chat_id = uc.chat_id
+    order by m.chat_id, m.created_at desc
+  ),
+  chat_unread as (
+    select uc.chat_id, count(m.id) as count
+    from user_chats uc
+    left join public.messages m on m.chat_id = uc.chat_id and m.created_at > uc.last_read_at
+    group by uc.chat_id
+  ),
+  chat_other_member as (
+    select cm.chat_id, max(p.username) as username
+    from public.chat_members cm
+    join public.profiles p on cm.user_id = p.id
+    where cm.user_id != auth.uid()
+    group by cm.chat_id
+  )
+  select 
+    c.id as chat_id,
+    c.type,
+    case 
+      when c.type = 'direct' then com.username 
+      else c.name 
+    end as name,
+    clm.content as last_message,
+    clm.created_at as last_time,
+    coalesce(cu.count, 0) as unread_count
+  from public.chats c
+  join user_chats uc on c.id = uc.chat_id
+  left join chat_last_msg clm on c.id = clm.chat_id
+  left join chat_unread cu on c.id = cu.chat_id
+  left join chat_other_member com on c.id = com.chat_id;
+end;
+$$;
+
+-- ============================================================
+-- RPC: get_or_create_direct_chat(_friend_id) - 1:1 방 생성 및 조회
+-- ============================================================
+create or replace function public.get_or_create_direct_chat(_friend_id uuid)
+returns uuid
+language plpgsql
+security definer
+as $$
+declare
+  _chat_id uuid;
+begin
+  select cm1.chat_id into _chat_id
+  from public.chat_members cm1
+  join public.chat_members cm2 on cm1.chat_id = cm2.chat_id
+  join public.chats c on cm1.chat_id = c.id
+  where c.type = 'direct'
+    and cm1.user_id = auth.uid()
+    and cm2.user_id = _friend_id;
+    
+  if _chat_id is null then
+    insert into public.chats (type)
+    values ('direct')
+    returning id into _chat_id;
+    
+    insert into public.chat_members (chat_id, user_id)
+    values 
+      (_chat_id, auth.uid()),
+      (_chat_id, _friend_id);
+  end if;
+  
+  return _chat_id;
+end;
+$$;
+

@@ -1,4 +1,6 @@
-import { currentUser, friends } from '../data/dummy'
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { supabase, isSupabaseConfigured } from '../lib/supabase'
 import Avatar from '../components/Avatar'
 import { Search, Plus } from '../components/Icons'
 
@@ -25,8 +27,92 @@ function IconButton({ label, children }) {
 }
 
 function Friends() {
+  const navigate = useNavigate()
+  const [currentUser, setCurrentUser] = useState(null)
+  const [friendsList, setFriendsList] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function loadFriends() {
+      if (!isSupabaseConfigured) {
+        // Fallback for development without Supabase
+        setCurrentUser({ id: 'me', username: '나 (더미)', statusMessage: 'Supabase가 설정되지 않았습니다.' })
+        setFriendsList([
+          { id: 'u1', username: '김하늘', statusMessage: '오늘도 화이팅' },
+          { id: 'u2', username: '이준호', statusMessage: '' },
+        ])
+        setLoading(false)
+        return
+      }
+
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return
+
+        // 1. 내 프로필 정보 로드
+        const { data: myProfile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single()
+
+        if (myProfile) {
+          setCurrentUser(myProfile)
+        } else {
+          setCurrentUser({ id: user.id, username: user.email.split('@')[0], statusMessage: '' })
+        }
+
+        // 2. 다른 유저 목록(친구 목록) 로드
+        const { data: otherProfiles, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .neq('id', user.id)
+          .order('username', { ascending: true })
+
+        if (error) throw error
+        setFriendsList(otherProfiles || [])
+      } catch (err) {
+        console.error('친구 목록 로딩 실패:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadFriends()
+  }, [])
+
+  const handleFriendClick = async (friendId) => {
+    if (!isSupabaseConfigured) {
+      navigate('/app/chats/c1')
+      return
+    }
+
+    try {
+      // 1:1 채팅방 생성 또는 기존 방 조회
+      const { data: chatId, error } = await supabase.rpc('get_or_create_direct_chat', {
+        _friend_id: friendId,
+      })
+
+      if (error) throw error
+      if (chatId) {
+        navigate(`/app/chats/${chatId}`)
+      }
+    } catch (err) {
+      console.error('채팅방 생성 실패:', err)
+      alert('채팅방을 여는 도중 오류가 발생했습니다.')
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex h-full items-center justify-center text-sm text-ink-muted bg-white">
+        로딩 중...
+      </div>
+    )
+  }
+
   return (
-    <div className="pb-2">
+    <div className="pb-2 bg-white min-h-full">
       <TopBar title="친구">
         <IconButton label="검색">
           <Search size={22} />
@@ -37,34 +123,37 @@ function Friends() {
       </TopBar>
 
       {/* 내 프로필 */}
-      <div className="flex items-center gap-3 px-4 py-3 active:bg-surface">
-        <Avatar name={currentUser.username} size="lg" />
-        <div className="min-w-0">
-          <p className="text-[18px] font-semibold text-ink">
-            {currentUser.username}
-          </p>
-          <p className="truncate text-sm text-ink-muted">
-            {currentUser.statusMessage}
-          </p>
+      {currentUser && (
+        <div className="flex items-center gap-3 px-4 py-3 active:bg-surface transition-colors cursor-pointer">
+          <Avatar name={currentUser.username} size="lg" />
+          <div className="min-w-0 flex-1">
+            <p className="text-[18px] font-semibold text-ink">
+              {currentUser.username}
+            </p>
+            <p className="truncate text-sm text-ink-muted">
+              {currentUser.status_message || currentUser.statusMessage || ''}
+            </p>
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="my-1 h-px bg-line-subtle" />
 
       {/* 친구 목록 */}
-      <p className="px-4 py-2 text-xs text-ink-light">친구 {friends.length}</p>
+      <p className="px-4 py-2 text-xs text-ink-light">친구 {friendsList.length}</p>
       <ul>
-        {friends.map((f) => (
+        {friendsList.map((f) => (
           <li
             key={f.id}
-            className="flex h-16 items-center gap-3 px-4 transition-colors active:bg-surface"
+            onClick={() => handleFriendClick(f.id)}
+            className="flex h-16 items-center gap-3 px-4 transition-colors active:bg-surface cursor-pointer"
           >
             <Avatar name={f.username} size="md" />
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
               <p className="font-medium text-ink">{f.username}</p>
-              {f.statusMessage && (
+              {f.status_message && (
                 <p className="truncate text-sm text-ink-muted">
-                  {f.statusMessage}
+                  {f.status_message}
                 </p>
               )}
             </div>

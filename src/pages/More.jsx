@@ -1,5 +1,6 @@
+import { useNavigate } from 'react-router-dom'
 import { currentUser } from '../data/dummy'
-import { isSupabaseConfigured } from '../lib/supabase'
+import { supabase, isSupabaseConfigured } from '../lib/supabase'
 import Avatar from '../components/Avatar'
 import { User, Bell, Moon, LogOut, ChevronRight } from '../components/Icons'
 
@@ -11,6 +12,19 @@ const menu = [
 ]
 
 function More() {
+  const navigate = useNavigate()
+
+  const handleMenuClick = async (label) => {
+    if (label === '로그아웃') {
+      if (window.confirm('로그아웃 하시겠습니까?')) {
+        if (supabase) {
+          await supabase.auth.signOut()
+        }
+        navigate('/')
+      }
+    }
+  }
+
   return (
     <div className="pb-2">
       <header className="flex h-14 items-center px-4">
@@ -38,6 +52,7 @@ function More() {
           <li key={label}>
             <button
               type="button"
+              onClick={() => handleMenuClick(label)}
               className="flex w-full items-center gap-3 px-4 py-3.5 text-left transition-colors active:bg-surface"
             >
               <Icon
