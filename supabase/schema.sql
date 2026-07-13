@@ -148,7 +148,8 @@ returns table (
   name text,
   last_message text,
   last_time timestamptz,
-  unread_count bigint
+  unread_count bigint,
+  avatar_url text
 )
 language plpgsql
 security definer
@@ -176,7 +177,10 @@ begin
     group by uc.chat_id
   ),
   chat_other_member as (
-    select cm.chat_id, max(p.username) as username
+    select 
+      cm.chat_id, 
+      max(p.username) as username,
+      max(p.avatar_url) as avatar_url
     from public.chat_members cm
     join public.profiles p on cm.user_id = p.id
     where cm.user_id != auth.uid()
@@ -191,7 +195,11 @@ begin
     end as name,
     clm.content as last_message,
     clm.created_at as last_time,
-    coalesce(cu.count, 0) as unread_count
+    coalesce(cu.count, 0) as unread_count,
+    case
+      when c.type = 'direct' then com.avatar_url
+      else null
+    end as avatar_url
   from public.chats c
   join user_chats uc on c.id = uc.chat_id
   left join chat_last_msg clm on c.id = clm.chat_id

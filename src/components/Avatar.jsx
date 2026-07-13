@@ -23,7 +23,7 @@ const SIZES = {
   xl: { box: 'h-20 w-20 text-2xl', icon: 36 },
 }
 
-function Avatar({ name = '', group = false, size = 'md', className = '' }) {
+function Avatar({ name = '', url = '', group = false, size = 'md', className = '' }) {
   const s = SIZES[size] || SIZES.md
 
   if (group) {
@@ -33,6 +33,16 @@ function Avatar({ name = '', group = false, size = 'md', className = '' }) {
       >
         <Users size={s.icon} />
       </div>
+    )
+  }
+
+  if (url) {
+    return (
+      <img
+        src={url}
+        alt={name}
+        className={`${s.box} shrink-0 rounded-xl object-cover ${className}`}
+      />
     )
   }
 

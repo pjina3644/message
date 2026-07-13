@@ -124,8 +124,8 @@ function Friends() {
 
       {/* 내 프로필 */}
       {currentUser && (
-        <div className="flex items-center gap-3 px-4 py-3 active:bg-surface transition-colors cursor-pointer">
-          <Avatar name={currentUser.username} size="lg" />
+        <div className="flex items-center gap-3 px-4 py-3 active:bg-surface transition-colors cursor-pointer" onClick={() => navigate('/app/profile')}>
+          <Avatar name={currentUser.username} url={currentUser.avatar_url} size="lg" />
           <div className="min-w-0 flex-1">
             <p className="text-[18px] font-semibold text-ink">
               {currentUser.username}
@@ -148,7 +148,7 @@ function Friends() {
             onClick={() => handleFriendClick(f.id)}
             className="flex h-16 items-center gap-3 px-4 transition-colors active:bg-surface cursor-pointer"
           >
-            <Avatar name={f.username} size="md" />
+            <Avatar name={f.username} url={f.avatar_url} size="md" />
             <div className="min-w-0 flex-1">
               <p className="font-medium text-ink">{f.username}</p>
               {f.status_message && (

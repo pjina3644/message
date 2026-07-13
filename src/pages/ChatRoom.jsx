@@ -110,7 +110,8 @@ function ChatRoom() {
             type,
             created_at,
             profiles (
-              username
+              username,
+              avatar_url
             )
           `)
           .eq('chat_id', id)
@@ -153,16 +154,16 @@ function ChatRoom() {
         async (payload) => {
           const newMsg = payload.new
 
-          // 발신자 닉네임 가져오기
+          // 발신자 닉네임 및 아바타 가져오기
           const { data: profile } = await supabase
             .from('profiles')
-            .select('username')
+            .select('username, avatar_url')
             .eq('id', newMsg.sender_id)
             .single()
 
           const messageWithProfile = {
             ...newMsg,
-            profiles: profile ? { username: profile.username } : null,
+            profiles: profile ? { username: profile.username, avatar_url: profile.avatar_url } : null,
           }
 
           setMessages((prev) => {
@@ -319,7 +320,7 @@ function ChatRoom() {
                   {/* 상대 아바타 (연속 메시지는 자리만 유지) */}
                   {!mine &&
                     (firstOfRun ? (
-                      <Avatar name={senderName} size="sm" />
+                      <Avatar name={senderName} url={m.profiles?.avatar_url} size="sm" />
                     ) : (
                       <span className="w-9 shrink-0" />
                     ))}

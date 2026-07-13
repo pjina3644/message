@@ -122,7 +122,7 @@ function ChatList() {
                 to={`/app/chats/${chat.chat_id}`}
                 className="flex items-center gap-3 px-4 py-3 transition-colors active:bg-surface cursor-pointer"
               >
-                <Avatar name={chat.name || '알 수 없음'} group={chat.type === 'group'} size="md" />
+                <Avatar name={chat.name || '알 수 없음'} url={chat.avatar_url} group={chat.type === 'group'} size="md" />
 
                 <div className="min-w-0 flex-1">
                   <div className="flex items-baseline justify-between gap-2">

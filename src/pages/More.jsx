@@ -1,5 +1,5 @@
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { currentUser } from '../data/dummy'
 import { supabase, isSupabaseConfigured } from '../lib/supabase'
 import Avatar from '../components/Avatar'
 import { User, Bell, Moon, LogOut, ChevronRight } from '../components/Icons'
@@ -13,9 +13,46 @@ const menu = [
 
 function More() {
   const navigate = useNavigate()
+  const [currentUser, setCurrentUser] = useState(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function loadProfile() {
+      if (!isSupabaseConfigured) {
+        setCurrentUser({ username: '나 (더미)', status_message: 'Supabase 미설정', avatar_url: '' })
+        setLoading(false)
+        return
+      }
+
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return
+
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single()
+
+        if (profile) {
+          setCurrentUser(profile)
+        } else {
+          setCurrentUser({ username: user.email.split('@')[0], status_message: '' })
+        }
+      } catch (err) {
+        console.error('더보기 프로필 조회 실패:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadProfile()
+  }, [])
 
   const handleMenuClick = async (label) => {
-    if (label === '로그아웃') {
+    if (label === '프로필 편집') {
+      navigate('/app/profile')
+    } else if (label === '로그아웃') {
       if (window.confirm('로그아웃 하시겠습니까?')) {
         if (supabase) {
           await supabase.auth.signOut()
@@ -25,24 +62,34 @@ function More() {
     }
   }
 
+  if (loading) {
+    return (
+      <div className="flex h-full items-center justify-center text-sm text-ink-muted bg-white">
+        로딩 중...
+      </div>
+    )
+  }
+
   return (
-    <div className="pb-2">
+    <div className="pb-2 bg-white min-h-full">
       <header className="flex h-14 items-center px-4">
         <h1 className="text-[22px] font-bold text-ink">더보기</h1>
       </header>
 
       {/* 내 프로필 */}
-      <div className="flex items-center gap-3 px-4 py-3 active:bg-surface">
-        <Avatar name={currentUser.username} size="lg" />
-        <div className="min-w-0">
-          <p className="text-[18px] font-semibold text-ink">
-            {currentUser.username}
-          </p>
-          <p className="truncate text-sm text-ink-muted">
-            {currentUser.statusMessage}
-          </p>
+      {currentUser && (
+        <div className="flex items-center gap-3 px-4 py-3 active:bg-surface cursor-pointer" onClick={() => navigate('/app/profile')}>
+          <Avatar name={currentUser.username || '나'} url={currentUser.avatar_url} size="lg" />
+          <div className="min-w-0 flex-1">
+            <p className="text-[18px] font-semibold text-ink">
+              {currentUser.username || '나'}
+            </p>
+            <p className="truncate text-sm text-ink-muted">
+              {currentUser.status_message || ''}
+            </p>
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="my-1 h-px bg-line-subtle" />
 
@@ -53,7 +100,7 @@ function More() {
             <button
               type="button"
               onClick={() => handleMenuClick(label)}
-              className="flex w-full items-center gap-3 px-4 py-3.5 text-left transition-colors active:bg-surface"
+              className="flex w-full items-center gap-3 px-4 py-3.5 text-left transition-colors active:bg-surface cursor-pointer"
             >
               <Icon
                 size={22}
