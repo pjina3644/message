@@ -1,5 +1,7 @@
+'use client'
+
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from 'next/navigation'
 import { supabase, isSupabaseConfigured } from '../lib/supabase'
 import Avatar from '../components/Avatar'
 import { Search, Plus } from '../components/Icons'
@@ -27,7 +29,7 @@ function IconButton({ label, children }) {
 }
 
 function Friends() {
-  const navigate = useNavigate()
+  const router = useRouter()
   const [currentUser, setCurrentUser] = useState(null)
   const [friendsList, setFriendsList] = useState([])
   const [loading, setLoading] = useState(true)
@@ -83,7 +85,7 @@ function Friends() {
 
   const handleFriendClick = async (friendId) => {
     if (!isSupabaseConfigured) {
-      navigate('/app/chats/c1')
+      router.push('/app/chats/c1')
       return
     }
 
@@ -95,7 +97,7 @@ function Friends() {
 
       if (error) throw error
       if (chatId) {
-        navigate(`/app/chats/${chatId}`)
+        router.push(`/app/chats/${chatId}`)
       }
     } catch (err) {
       console.error('채팅방 생성 실패:', err)
@@ -124,7 +126,7 @@ function Friends() {
 
       {/* 내 프로필 */}
       {currentUser && (
-        <div className="flex items-center gap-3 px-4 py-3 active:bg-surface transition-colors cursor-pointer" onClick={() => navigate('/app/profile')}>
+        <div className="flex items-center gap-3 px-4 py-3 active:bg-surface transition-colors cursor-pointer" onClick={() => router.push('/app/profile')}>
           <Avatar name={currentUser.username} url={currentUser.avatar_url} size="lg" />
           <div className="min-w-0 flex-1">
             <p className="text-[18px] font-semibold text-ink">

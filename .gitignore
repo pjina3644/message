@@ -27,6 +27,7 @@ dist-ssr
 .DS_Store
 *.suo
 *.ntvs*
-*.njsproj
-*.sln
-*.sw?
+# Next.js build output
+.next/
+next-env.d.ts
+

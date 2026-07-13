@@ -1,11 +1,13 @@
+'use client'
+
 import { useState, useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from 'next/navigation'
 import { supabase, isSupabaseConfigured } from '../lib/supabase'
 import Avatar from '../components/Avatar'
 import { ChevronLeft } from '../components/Icons'
 
 function ProfileEdit() {
-  const navigate = useNavigate()
+  const router = useRouter()
   const fileInputRef = useRef(null)
 
   const [currentUser, setCurrentUser] = useState(null)
@@ -31,7 +33,7 @@ function ProfileEdit() {
       try {
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) {
-          navigate('/auth')
+          router.push('/auth')
           return
         }
 
@@ -58,7 +60,7 @@ function ProfileEdit() {
     }
 
     loadProfile()
-  }, [navigate])
+  }, [router])
 
   const handleAvatarClick = () => {
     fileInputRef.current?.click()
@@ -122,7 +124,7 @@ function ProfileEdit() {
       }
       
       // 저장 성공 시 설정 페이지로 돌아감
-      navigate('/app/more')
+      router.push('/app/more')
     } catch (err) {
       console.error('프로필 저장 실패:', err)
       setErrorMsg('프로필 저장 중 오류가 발생했습니다.')
@@ -145,7 +147,7 @@ function ProfileEdit() {
       <header className="flex h-14 shrink-0 items-center justify-between border-b border-line-subtle px-2">
         <div className="flex items-center gap-2">
           <button
-            onClick={() => navigate('/app/more')}
+            onClick={() => router.push('/app/more')}
             className="flex h-9 w-9 items-center justify-center rounded-xl text-ink-body active:bg-surface"
             aria-label="뒤로"
           >

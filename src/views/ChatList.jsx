@@ -1,5 +1,8 @@
+'use client'
+
 import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { supabase, isSupabaseConfigured } from '../lib/supabase'
 import Avatar from '../components/Avatar'
 import { Search, Plus } from '../components/Icons'
@@ -32,7 +35,7 @@ function formatChatTime(isoString) {
 }
 
 function ChatList() {
-  const navigate = useNavigate()
+  const router = useRouter()
   const [chatList, setChatList] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -111,7 +114,7 @@ function ChatList() {
           </button>
           <button
             type="button"
-            onClick={() => navigate('/app/chats/new')}
+            onClick={() => router.push('/app/chats/new')}
             aria-label="새 채팅"
             className="flex h-9 w-9 items-center justify-center rounded-xl text-ink-sub transition-colors active:bg-surface"
           >
@@ -130,7 +133,7 @@ function ChatList() {
           {chatList.map((chat) => (
             <li key={chat.chat_id}>
               <Link
-                to={`/app/chats/${chat.chat_id}`}
+                href={`/app/chats/${chat.chat_id}`}
                 className="flex items-center gap-3 px-4 py-3 transition-colors active:bg-surface cursor-pointer"
               >
                 <Avatar name={chat.name || '알 수 없음'} url={chat.avatar_url} group={chat.type === 'group'} size="md" />

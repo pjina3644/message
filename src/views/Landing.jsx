@@ -1,4 +1,6 @@
-import { Link } from 'react-router-dom'
+'use client'
+
+import Link from 'next/link'
 import {
   MessageCircle,
   Zap,
@@ -51,12 +53,12 @@ const steps = [
   { no: '03', title: '대화 시작', desc: '메시지를 보내면 실시간으로 바로 전달.' },
 ]
 
-const stack = ['React', 'Vite', 'Tailwind CSS', 'Supabase']
+const stack = ['React', 'Next.js', 'Tailwind CSS', 'Supabase']
 
-// 브랜드 로고 — 옐로 라운드 스퀘어 + 워드마크
+// 브랜드 로고
 function Logo({ light = false }) {
   return (
-    <Link to="/" className="flex items-center gap-2">
+    <Link href="/" className="flex items-center gap-2">
       <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-kakao text-kakao-ink">
         <MessageCircle size={18} />
       </span>
@@ -71,11 +73,11 @@ function Logo({ light = false }) {
   )
 }
 
-// 마케팅 필 — 보더드 옐로(2px solid 블랙, 16px radius)는 Kakao 시그니처 CTA
-function MarketingPill({ to, children, className = '' }) {
+// 마케팅 필
+function MarketingPill({ href, children, className = '' }) {
   return (
     <Link
-      to={to}
+      href={href}
       className={`inline-flex items-center justify-center gap-1.5 rounded-2xl border-2 border-kakao-ink bg-kakao-marketing px-5 py-3 text-base font-bold text-kakao-ink transition hover:brightness-95 ${className}`}
     >
       {children}
@@ -83,11 +85,10 @@ function MarketingPill({ to, children, className = '' }) {
   )
 }
 
-// 히어로 옆 휴대폰 목업 — 리디자인된 ChatRoom(흰 배경 + 옐로/화이트 말풍선) 축소 재현
+// 히어로 옆 휴대폰 목업
 function PhoneMockup() {
   return (
     <div className="relative mx-auto w-[260px] sm:w-[300px]">
-      {/* 뒤쪽 장식용 옐로 블롭 */}
       <div className="absolute -inset-6 -z-10 rounded-[3rem] bg-kakao opacity-40 blur-2xl" />
 
       <div className="overflow-hidden rounded-[2.5rem] border-[6px] border-kakao-ink bg-white shadow-2xl">
@@ -156,7 +157,6 @@ function Landing({ session }) {
   const startPath = session ? '/app' : '/auth'
   return (
     <div className="min-h-screen bg-white text-ink-body">
-      {/* ───── 상단 네비게이션 ───── */}
       <header className="sticky top-0 z-20 border-b border-line-subtle bg-white/85 backdrop-blur">
         <nav className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3.5">
           <Logo />
@@ -174,7 +174,7 @@ function Landing({ session }) {
               사용법
             </a>
             <Link
-              to={startPath}
+              href={startPath}
               className="rounded-2xl border-2 border-kakao-ink bg-kakao-marketing px-4 py-2 text-sm font-bold text-kakao-ink transition hover:brightness-95"
             >
               시작하기
@@ -183,12 +183,10 @@ function Landing({ session }) {
         </nav>
       </header>
 
-      {/* ───── 히어로 ───── */}
       <section className="relative overflow-hidden">
         <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-[#FFFBE0] via-white to-white" />
 
         <div className="mx-auto grid max-w-6xl items-center gap-12 px-5 py-16 sm:py-24 lg:grid-cols-2">
-          {/* 왼쪽: 카피 */}
           <div className="text-center lg:text-left">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-kakao px-3 py-1 text-xs font-bold text-kakao-ink">
               <Zap size={14} />
@@ -211,7 +209,7 @@ function Landing({ session }) {
             </p>
 
             <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row lg:justify-start sm:justify-center">
-              <MarketingPill to={startPath} className="w-full sm:w-auto">
+              <MarketingPill href={startPath} className="w-full sm:w-auto">
                 무료로 시작하기
                 <ArrowRight size={18} />
               </MarketingPill>
@@ -228,14 +226,12 @@ function Landing({ session }) {
             </p>
           </div>
 
-          {/* 오른쪽: 휴대폰 목업 */}
           <div className="flex justify-center lg:justify-end">
             <PhoneMockup />
           </div>
         </div>
       </section>
 
-      {/* ───── 기능 ───── */}
       <section id="features" className="border-t border-line-subtle bg-surface">
         <div className="mx-auto max-w-6xl px-5 py-20">
           <div className="mx-auto max-w-2xl text-center">
@@ -266,7 +262,6 @@ function Landing({ session }) {
         </div>
       </section>
 
-      {/* ───── 사용법 (3단계) ───── */}
       <section id="how" className="bg-white">
         <div className="mx-auto max-w-6xl px-5 py-20">
           <div className="mx-auto max-w-2xl text-center">
@@ -290,7 +285,6 @@ function Landing({ session }) {
             ))}
           </div>
 
-          {/* 기술 스택 스트립 */}
           <div className="mt-16 flex flex-col items-center gap-4">
             <p className="text-xs font-medium uppercase tracking-widest text-ink-light">
               Powered by
@@ -309,7 +303,6 @@ function Landing({ session }) {
         </div>
       </section>
 
-      {/* ───── 하단 CTA 밴드 ───── */}
       <section className="px-5 pb-20">
         <div className="mx-auto max-w-5xl rounded-3xl bg-kakao px-8 py-14 text-center">
           <h2 className="text-3xl font-extrabold tracking-tight text-kakao-ink sm:text-4xl">
@@ -319,7 +312,7 @@ function Landing({ session }) {
             가입은 무료. 친구를 찾고, 첫 메시지를 보내보세요.
           </p>
           <Link
-            to={startPath}
+            href={startPath}
             className="mt-7 inline-flex items-center gap-2 rounded-2xl bg-kakao-ink px-8 py-3.5 text-base font-bold text-white transition hover:brightness-125"
           >
             무료로 시작하기
@@ -328,7 +321,6 @@ function Landing({ session }) {
         </div>
       </section>
 
-      {/* ───── 푸터 ───── */}
       <footer className="bg-kakao-ink">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-5 py-10 sm:flex-row">
           <Logo light />

@@ -1,5 +1,7 @@
+'use client'
+
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from 'next/navigation'
 import { supabase, isSupabaseConfigured } from '../lib/supabase'
 import Avatar from '../components/Avatar'
 import { User, Bell, Moon, LogOut, ChevronRight } from '../components/Icons'
@@ -12,7 +14,7 @@ const menu = [
 ]
 
 function More() {
-  const navigate = useNavigate()
+  const router = useRouter()
   const [currentUser, setCurrentUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
@@ -51,13 +53,13 @@ function More() {
 
   const handleMenuClick = async (label) => {
     if (label === '프로필 편집') {
-      navigate('/app/profile')
+      router.push('/app/profile')
     } else if (label === '로그아웃') {
       if (window.confirm('로그아웃 하시겠습니까?')) {
         if (supabase) {
           await supabase.auth.signOut()
         }
-        navigate('/')
+        router.push('/')
       }
     }
   }
@@ -78,7 +80,7 @@ function More() {
 
       {/* 내 프로필 */}
       {currentUser && (
-        <div className="flex items-center gap-3 px-4 py-3 active:bg-surface cursor-pointer" onClick={() => navigate('/app/profile')}>
+        <div className="flex items-center gap-3 px-4 py-3 active:bg-surface cursor-pointer" onClick={() => router.push('/app/profile')}>
           <Avatar name={currentUser.username || '나'} url={currentUser.avatar_url} size="lg" />
           <div className="min-w-0 flex-1">
             <p className="text-[18px] font-semibold text-ink">

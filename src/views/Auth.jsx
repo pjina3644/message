@@ -1,10 +1,13 @@
+'use client'
+
 import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { supabase } from '../lib/supabase'
 import { MessageCircle } from '../components/Icons'
 
 function Auth() {
-  const navigate = useNavigate()
+  const router = useRouter()
   const [isSignUp, setIsSignUp] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -59,7 +62,7 @@ function Auth() {
             .update({ username: username.trim() })
             .eq('id', data.user.id)
           
-          navigate('/app')
+          router.push('/app')
         } else {
           setSuccessMsg('회원가입 메일이 발송되었습니다. 메일함을 확인해 주세요! (또는 바로 로그인해 보세요)')
           // 메일 인증 확인 메일이 활성화된 경우 대기 필요
@@ -73,7 +76,7 @@ function Auth() {
 
         if (error) throw error
 
-        navigate('/app')
+        router.push('/app')
       }
     } catch (err) {
       console.error(err)
@@ -88,7 +91,7 @@ function Auth() {
       {/* 뒤로 가기 / 헤더 */}
       <div className="flex items-center">
         <Link
-          to="/"
+          href="/"
           className="flex h-9 items-center gap-1 text-sm font-semibold text-ink-sub active:text-ink"
         >
           &larr; 랜딩페이지로

@@ -1,5 +1,7 @@
+'use client'
+
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useRouter } from 'next/navigation'
 import { supabase, isSupabaseConfigured } from '../lib/supabase'
 import Avatar from '../components/Avatar'
 import { ChevronLeft, Search, Menu, Plus, Send } from '../components/Icons'
@@ -23,7 +25,7 @@ function formatSystemDate(isoString) {
 
 function ChatRoom() {
   const { id } = useParams()
-  const navigate = useNavigate()
+  const router = useRouter()
   const messagesEndRef = useRef(null)
 
   const [chat, setChat] = useState(null)
@@ -64,7 +66,7 @@ function ChatRoom() {
       try {
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) {
-          navigate('/auth')
+          router.push('/auth')
           return
         }
         setCurrentUser(user)
@@ -155,7 +157,7 @@ function ChatRoom() {
     }
 
     loadChatAndMessages()
-  }, [id, navigate])
+  }, [id, router])
 
   // 2. 실시간 메시지 수신 및 멤버 읽음 상태 구독
   useEffect(() => {
@@ -276,7 +278,7 @@ function ChatRoom() {
       <div className="flex h-full flex-col items-center justify-center bg-white px-6 text-center">
         <p className="text-ink">존재하지 않거나 접근 권한이 없는 채팅방입니다.</p>
         <button
-          onClick={() => navigate('/app/chats')}
+          onClick={() => router.push('/app/chats')}
           className="mt-4 rounded-xl border border-line px-4 py-2 text-sm font-semibold text-ink-body active:bg-surface"
         >
           채팅 목록으로
@@ -298,7 +300,7 @@ function ChatRoom() {
       {/* 헤더 */}
       <header className="flex h-14 shrink-0 items-center gap-2 border-b border-line-subtle px-2 bg-white z-10">
         <button
-          onClick={() => navigate('/app/chats')}
+          onClick={() => router.push('/app/chats')}
           className="flex h-9 w-9 items-center justify-center rounded-xl text-ink-body active:bg-surface"
           aria-label="뒤로"
         >

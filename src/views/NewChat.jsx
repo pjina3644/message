@@ -1,11 +1,13 @@
+'use client'
+
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from 'next/navigation'
 import { supabase, isSupabaseConfigured } from '../lib/supabase'
 import Avatar from '../components/Avatar'
 import { ChevronLeft } from '../components/Icons'
 
 function NewChat() {
-  const navigate = useNavigate()
+  const router = useRouter()
   
   const [friendsList, setFriendsList] = useState([])
   const [selectedIds, setSelectedIds] = useState([])
@@ -74,7 +76,7 @@ function NewChat() {
 
     try {
       if (!isSupabaseConfigured) {
-        navigate('/app/chats/c1')
+        router.push('/app/chats/c1')
         return
       }
 
@@ -84,7 +86,7 @@ function NewChat() {
           _friend_id: selectedIds[0],
         })
         if (error) throw error
-        navigate(`/app/chats/${chatId}`)
+        router.push(`/app/chats/${chatId}`)
       } else {
         // 그룹 대화방 개설
         const defaultName = getSelectedUsernames().join(', ')
@@ -95,7 +97,7 @@ function NewChat() {
           _user_ids: selectedIds,
         })
         if (error) throw error
-        navigate(`/app/chats/${chatId}`)
+        router.push(`/app/chats/${chatId}`)
       }
     } catch (err) {
       console.error('채팅방 생성 오류:', err)
@@ -120,7 +122,7 @@ function NewChat() {
       <header className="flex h-14 shrink-0 items-center justify-between border-b border-line-subtle px-2">
         <div className="flex items-center gap-2">
           <button
-            onClick={() => navigate('/app/chats')}
+            onClick={() => router.push('/app/chats')}
             className="flex h-9 w-9 items-center justify-center rounded-xl text-ink-body active:bg-surface"
             aria-label="뒤로"
           >

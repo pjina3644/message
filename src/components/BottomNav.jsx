@@ -1,41 +1,37 @@
-import { NavLink } from 'react-router-dom'
+'use client'
+
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { User, MessageCircle, Menu } from './Icons'
-import { chats } from '../data/dummy'
-
-const tabs = [
-  { to: '/app', label: '친구', Icon: User, end: true },
-  { to: '/app/chats', label: '채팅', Icon: MessageCircle },
-  { to: '/app/more', label: '더보기', Icon: Menu },
-]
-
-// 안 읽은 메시지 합계 — 채팅 탭 배지
-const totalUnread = chats.reduce((sum, c) => sum + (c.unread || 0), 0)
 
 function BottomNav() {
+  const pathname = usePathname()
+
+  const getLinkClass = (path) => {
+    // Exact match for /app, or matches prefix /app/chats (but not chats/new)
+    const isActive = path === '/app' ? pathname === '/app' : pathname.startsWith(path)
+    
+    return `flex flex-col items-center justify-center gap-1 rounded-xl text-xs font-semibold transition-all ${
+      isActive
+        ? 'text-ink-body font-bold animate-bubble'
+        : 'text-ink-light opacity-65 hover:opacity-90'
+    }`
+  }
+
   return (
-    <nav className="flex border-t border-line bg-white">
-      {tabs.map(({ to, label, Icon, end }) => (
-        <NavLink
-          key={to}
-          to={to}
-          end={end}
-          className={({ isActive }) =>
-            `relative flex h-14 flex-1 flex-col items-center justify-center gap-1 text-[11px] transition-colors ${
-              isActive ? 'text-ink-body' : 'text-ink-light'
-            }`
-          }
-        >
-          <span className="relative">
-            <Icon size={24} />
-            {to === '/app/chats' && totalUnread > 0 && (
-              <span className="absolute -right-2 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-danger px-1 text-[10px] font-bold leading-none text-white">
-                {totalUnread > 99 ? '99+' : totalUnread}
-              </span>
-            )}
-          </span>
-          {label}
-        </NavLink>
-      ))}
+    <nav className="flex h-[72px] shrink-0 border-t border-line-subtle bg-surface/90 backdrop-blur-md px-3 pb-safe-bottom">
+      <Link href="/app" className={`flex-1 ${getLinkClass('/app')}`} aria-label="친구">
+        <User size={22} />
+        <span>친구</span>
+      </Link>
+      <Link href="/app/chats" className={`flex-1 ${getLinkClass('/app/chats')}`} aria-label="채팅">
+        <MessageCircle size={22} />
+        <span>채팅</span>
+      </Link>
+      <Link href="/app/more" className={`flex-1 ${getLinkClass('/app/more')}`} aria-label="더보기">
+        <Menu size={22} />
+        <span>더보기</span>
+      </Link>
     </nav>
   )
 }
