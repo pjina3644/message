@@ -137,6 +137,7 @@ create trigger on_auth_user_created
 -- (3단계 실시간 수신에 필요)
 -- ============================================================
 alter publication supabase_realtime add table public.messages;
+alter publication supabase_realtime add table public.chat_members;
 
 -- ============================================================
 -- RPC: get_my_chats() - 내 채팅방 목록 및 메타데이터 조회
